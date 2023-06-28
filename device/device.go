@@ -171,7 +171,6 @@ func (d *Device) GetOutput() <-chan []byte {
 // SetInput sets up an input channel for data this sent for output to the
 // underlying device driver.
 func (d *Device) SetInput(in <-chan []byte) {
-
 }
 
 // GetCropCapability returns cropping info for device
@@ -407,7 +406,8 @@ func (d *Device) startStreamLoop(ctx context.Context) error {
 					if errors.Is(err, sys.EAGAIN) {
 						continue
 					}
-					panic(fmt.Sprintf("device: stream loop dequeue: %s", err))
+					// panic(fmt.Sprintf("device: stream loop dequeue: %s", err))
+					continue
 				}
 
 				// copy mapped buffer (copying avoids polluted data from subsequent dequeue ops)
@@ -423,7 +423,8 @@ func (d *Device) startStreamLoop(ctx context.Context) error {
 				}
 
 				if _, err := v4l2.QueueBuffer(fd, ioMemType, bufType, buff.Index); err != nil {
-					panic(fmt.Sprintf("device: stream loop queue: %s: buff: %#v", err, buff))
+					// panic(fmt.Sprintf("device: stream loop queue: %s: buff: %#v", err, buff))
+					continue
 				}
 			case <-ctx.Done():
 				d.Stop()
